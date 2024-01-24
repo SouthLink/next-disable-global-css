@@ -40,3 +40,5 @@ function withDisableNextJsGlobalCss({ ...nextConfig }) {
     },
   });
 }
+
+module.exports = withDisableNextJsGlobalCss;
