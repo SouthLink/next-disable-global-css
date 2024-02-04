@@ -1,3 +1,5 @@
+const path = require("node:path");
+
 function withDisableNextJsGlobalCss({ ...nextConfig }) {
   return Object.assign({}, nextConfig, {
     /**
