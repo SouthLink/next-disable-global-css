@@ -34,6 +34,35 @@ function withDisableNextJsGlobalCss({ ...nextConfig }) {
         }
       });
 
+      // Disabled error reporting by next.js about pure selection
+      // Configure CSS Modules for better control over styling
+      // This section modifies the webpack configuration to customize CSS Modules behavior
+      const rules = config.module.rules
+      .find((rule) => typeof rule.oneOf === 'object')
+      ?.oneOf.filter((rule) => Array.isArray(rule.use));
+
+      if (rules) {
+        rules.forEach((rule) => {
+          rule.use.forEach((moduleLoader) => {
+            if (
+              moduleLoader.loader?.includes('css-loader') &&
+              !moduleLoader.loader.includes('postcss-loader') &&
+              typeof moduleLoader.options.modules === 'object'
+            ) {
+              moduleLoader.options = {
+                ...moduleLoader.options,
+                modules: {
+                  ...moduleLoader.options.modules,
+                  mode: 'local', // Keep CSS Modules functionality
+                  auto: true, // Automatically detect whether to use CSS Modules
+                  exportGlobals: true, // Allow exporting global styles
+                },
+              };
+            }
+          });
+        });
+      }
+
       if (typeof nextConfig.webpack === "function") {
         return nextConfig.webpack(config, options);
       }
